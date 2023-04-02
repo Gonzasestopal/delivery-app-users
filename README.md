@@ -24,7 +24,7 @@
 
 - Run `docker build . -t delivery-app-users`
 
-- Config container into any provider.
+- Deploy image into any provider.
 
 # API Documentation
 
@@ -33,7 +33,6 @@
 Receives a request body:
 ```json
 {
-  "name": "Gonz",
   "password": "123456789",
   "email": "gonzasestopal@gmail.com",
 }
