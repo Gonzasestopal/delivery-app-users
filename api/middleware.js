@@ -1,4 +1,4 @@
-const db = require('../database/db-config.js');
+const db = require('./db-config.js');
 const users = require('../models/users.js');
 
 module.exports = {
