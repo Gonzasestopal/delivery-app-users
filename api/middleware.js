@@ -1,5 +1,5 @@
 const db = require('./db-config.js');
-const users = require('../models/users.js');
+const users = require('../repositories/users.js');
 const jwt = require("jsonwebtoken");
 
 const config = process.env;
