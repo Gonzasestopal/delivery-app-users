@@ -6,7 +6,6 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Migrations](#migrations)
 
 ## Prerequisites
 
