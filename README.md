@@ -6,6 +6,7 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Deployment](#deployment)
 
 ## Prerequisites
 
@@ -19,6 +20,11 @@
 
 - Run `npm run server` to start the local development server.
 
+## Deployment
+
+- Run `docker build . -t delivery-app-users`
+
+- Config container into any provider.
 
 # API Documentation
 
