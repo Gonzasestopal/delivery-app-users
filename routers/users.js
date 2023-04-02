@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const users = require('../models/users.js');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const utils = require('../utils.js')
 const {
     validateItemId,
     validatePostReqBody,
@@ -54,14 +54,7 @@ router.post('/login', (req, res) => {
                     if (!verified) {
                         throw new Error()
                     }
-                    const token = jwt.sign({
-                        id: user.id,
-                        email: user.email,
-                        is_admin: user.is_admin,
-                        status: user.status,
-                    }, process.env.TOKEN_KEY, {
-                        expiresIn: "2h",
-                    })
+                    const token = utils.signJWT(user)
                     return users.edit(user.id, { token: token })
                 })
                 .catch(err => {
@@ -106,14 +99,7 @@ router.post('/', validatePostReqBody, (req, res) => {
             return users.findById(newItemId['id'])
         })
         .then(user => {
-            const token = jwt.sign({
-                id: user.id,
-                email: user.email,
-                is_admin: user.is_admin,
-                status: user.status,
-            }, process.env.TOKEN_KEY, {
-                expiresIn: "2h",
-            })
+            token = utils.signJWT(user)
             return users.edit(user.id, { token: token })
         })
         .then(id => {
