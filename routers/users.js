@@ -65,7 +65,7 @@ router.post('/login', (req, res) => {
                     return users.edit(user.id, { token: token })
                 })
                 .catch(err => {
-                    res.status(500).json({ message: 'Invalid Credentials' })
+                    throw new Error()
                 })
         })
         .then(id => {
@@ -98,6 +98,7 @@ router.post('/', validatePostReqBody, (req, res) => {
                 'name': item.name,
                 'email': item.email.toLowerCase(),
                 'password': encryptedPassword,
+                'is_admin': item.is_admin,
             })
         })
         .then(id => {
