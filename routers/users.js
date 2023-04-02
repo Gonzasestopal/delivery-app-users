@@ -1,9 +1,18 @@
 const router = require('express').Router();
 const users = require('../models/users.js');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const {
     validateItemId,
     validatePostReqBody
 } = require('../api/middleware.js')
+
+class UserExists extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "UserExists";
+    }
+}
 
 router.get('/', (req, res) => {
     users.find()
@@ -29,17 +38,49 @@ router.get('/:id', validateItemId, (req, res) => {
 })
 
 router.post('/', validatePostReqBody, (req, res) => {
-    const item = req.body
-    users.add(item)
+    const item = req.body;
+
+    users.findByEmail(item.email)
+        .then(user => {
+            if (user) {
+                throw new UserExists();
+            }
+        })
+        .then(_ => {
+            return bcrypt.hash(item.password, 10)
+        })
+        .then(encryptedPassword => {
+            return users.add({
+                'name': item.name,
+                'email': item.email.toLowerCase(),
+                'password': encryptedPassword,
+            })
+        })
+        .then(id => {
+            [newItemId] = id
+            return users.findById(newItemId['id'])
+        })
+        .then(user => {
+            const token = jwt.sign({
+                id: user.id,
+                email: user.email,
+            }, process.env.TOKEN_KEY, {
+                expiresIn: "2h",
+            })
+            return users.edit(user.id, { token: token })
+        })
         .then(id => {
             [newItemId] = id
             return users.findById(newItemId['id'])
         })
         .then(item => {
             res.status(201).json({ message: 'Successfully added the item.', item })
-        })
-        .catch(err => {
+        }).catch(err => {
             console.log(err)
+            if (err.name == "UserExists") {
+                res.status(409).json({ message: 'User Already Exist. Please Login' });
+                return;
+            }
             res.status(500).json({ message: 'Error adding the item.' })
         })
 })
