@@ -58,6 +58,7 @@ router.post('/login', (req, res) => {
                         id: user.id,
                         email: user.email,
                         is_admin: user.is_admin,
+                        status: user.status,
                     }, process.env.TOKEN_KEY, {
                         expiresIn: "2h",
                     })
@@ -108,6 +109,7 @@ router.post('/', validatePostReqBody, (req, res) => {
                 id: user.id,
                 email: user.email,
                 is_admin: user.is_admin,
+                status: user.status,
             }, process.env.TOKEN_KEY, {
                 expiresIn: "2h",
             })
