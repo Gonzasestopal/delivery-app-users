@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {
     validateItemId,
-    validatePostReqBody
+    validatePostReqBody,
+    verifyToken,
+    isAdmin,
 } = require('../api/middleware.js')
 
 class UserExists extends Error {
@@ -21,7 +23,6 @@ router.get('/', (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ message: 'Error retrieving the users.' })
-            console.log(err)
         })
 })
 
@@ -33,8 +34,50 @@ router.get('/:id', validateItemId, (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ message: 'Error retrieving the item.' })
-            console.log(err)
         })
+})
+
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    if (!(email && password)) {
+        res.status(400).send("All input is required");
+    }
+
+    users.findByEmail(email)
+        .then(user => {
+            if (!user) {
+                throw new Error()
+            }
+            return bcrypt.compare(password, user.password)
+                .then(verified => {
+                    if (!verified) {
+                        throw new Error()
+                    }
+                    const token = jwt.sign({
+                        id: user.id,
+                        email: user.email,
+                        is_admin: user.is_admin,
+                    }, process.env.TOKEN_KEY, {
+                        expiresIn: "2h",
+                    })
+                    return users.edit(user.id, { token: token })
+                })
+                .catch(err => {
+                    res.status(500).json({ message: 'Invalid Credentials' })
+                })
+        })
+        .then(id => {
+            [newItemId] = id
+            return users.findById(newItemId['id'])
+        })
+        .then(item => {
+            res.status(200).json({ message: 'Successfully logged in.', item })
+        })
+        .catch(err => {
+            res.status(500).json({ message: 'Invalid Credentials' })
+        })
+
 })
 
 router.post('/', validatePostReqBody, (req, res) => {
@@ -64,6 +107,7 @@ router.post('/', validatePostReqBody, (req, res) => {
             const token = jwt.sign({
                 id: user.id,
                 email: user.email,
+                is_admin: user.is_admin,
             }, process.env.TOKEN_KEY, {
                 expiresIn: "2h",
             })
@@ -76,7 +120,6 @@ router.post('/', validatePostReqBody, (req, res) => {
         .then(item => {
             res.status(201).json({ message: 'Successfully added the item.', item })
         }).catch(err => {
-            console.log(err)
             if (err.name == "UserExists") {
                 res.status(409).json({ message: 'User Already Exist. Please Login' });
                 return;
@@ -85,7 +128,7 @@ router.post('/', validatePostReqBody, (req, res) => {
         })
 })
 
-router.put('/:id', validateItemId, (req, res) => {
+router.put('/:id', verifyToken, isAdmin, validateItemId, (req, res) => {
     const id = req.params.id
     const updated = req.body
     users.edit(id, updated)
@@ -97,12 +140,11 @@ router.put('/:id', validateItemId, (req, res) => {
             res.status(201).json(updated)
         })
         .catch(err => {
-            console.log(err)
             res.status(500).json({ message: 'Error updating the item.' })
         })
 })
 
-router.delete('/:id', validateItemId, (req, res) => {
+router.delete('/:id', verifyToken, isAdmin, validateItemId, (req, res) => {
     const id = req.params.id
     users.remove(id)
         .then(deleted => {
