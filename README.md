@@ -6,12 +6,12 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Migrations][#migrations]
+- [Migrations](#migrations)
 
 ## Installation
 Clone repo `git clone git@github.com:Gonzasestopal/delivery-app-users.git`
 
-Run `npm install && npm install knex -g` to install dependencies.
+Run `npm install` to install dependencies.
 
 ## Usage
 - Run `docker-compose up` to run db.
@@ -45,6 +45,8 @@ Returns the created item object:
     "name": "Gonz",
     "password": "U9PQxzHvkX",
     "email": "gonzasestopal@gmail.com",
+    "status": "active",
+    "is_admin": false,
     "created_at": null,
     "updated_at": null
   }
@@ -59,6 +61,8 @@ Receives an existing request parameter ID and a request body:
   "name": "sample name UPDATE",
   "password": "sample description UPDATE",
   "email": "cat1 UPDATE",
+  "status": "status UPDATE",
+  "is_admin": false,
 }
 ```
 
@@ -69,6 +73,8 @@ Returns the updated item object:
   "name": "sample name UPDATE",
   "password": "sample description UPDATE",
   "email": "cat1 UPDATE",
+  "status": "status UPDATE",
+  "is_admin": false,
   "created_at": null,
   "updated_at": null
 }
