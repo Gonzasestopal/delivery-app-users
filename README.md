@@ -51,7 +51,8 @@ Returns the created item object:
     "status": "active",
     "is_admin": false,
     "created_at": null,
-    "updated_at": null
+    "updated_at": null,
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsImVtYWlsIjoiYWRtaW5AaG90bWFpbC5jb20iLCJpc19hZG1pbiI6dHJ1ZSwic3RhdHVzIjoiYWN0aXZlIiwiaWF0IjoxNjgwNDE0Nzk1LCJleHAiOjE2ODA0MTUwOTV9.ybeYitxeWj_r3s3jtpc8aAgNZfQJda9L23iWsC2LUmY"
   }
 }
 ```
@@ -93,4 +94,31 @@ Returns a success message:
   "message": "Successfully removed the item."
 }
 ```
+
+## PUT /api/users/login
+
+Receives a request body:
+```json
+{
+  "name": "sample name UPDATE",
+  "password": "sample description UPDATE",
+}
+
+Return a success message with token:
+```json
+{
+    "message": "Successfully logged in.",
+    "item": {
+        "id": 27,
+        "name": "Gonz",
+        "email": "admin@hotmail.com",
+        "password": "$2a$10$ZMRNAJt7sXU/1S7TVEW/xuVqX1i8phv/3NrSsAXayYHKgEajIub4y",
+        "is_admin": true,
+        "status": "active",
+        "created_at": null,
+        "updated_at": null,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsImVtYWlsIjoiYWRtaW5AaG90bWFpbC5jb20iLCJpc19hZG1pbiI6dHJ1ZSwic3RhdHVzIjoiYWN0aXZlIiwiaWF0IjoxNjgwNDE0Nzk1LCJleHAiOjE2ODA0MTUwOTV9.ybeYitxeWj_r3s3jtpc8aAgNZfQJda9L23iWsC2LUmY"
+    }
+}
+
 
